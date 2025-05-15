@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia SETRANS/PI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Guia SETRANS/PI</h1>
+    </header>
+
+    <main>
+        <section id="formulario">
+            <h2>Encontre a S-Trans mais próxima</h2>
+            <form onsubmit="processarFormulario(event)">
+                <label for="nome">Seu nome:</label>
+                <input type="text" id="nome" required><br><br>
+
+                <label for="estado">Estado onde mora:</label>
+                <input type="text" id="estado" required><br><br>
+
+                <label for="bairro">Bairro onde mora:</label>
+                <input type="text" id="bairro" required><br><br>
+
+                <label for="servico">O que você deseja fazer?</label>
+                <select id="servico" required>
+                    <option value="">-- Selecione --</option>
+                    <option value="multa">Pagar Multa</option>
+                    <option value="passe">Emitir Passe Estudantil</option>
+                    <option value="licenciamento">Licenciamento de Transporte</option>
+                </select><br><br>
+
+                <button type="submit">Buscar</button>
+            </form>
+
+            <div id="resultado"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 SETRANS/PI</p>
+    </footer>
+
+    <script>
+        const unidades = [
+            {
+                estado: "PI",
+                bairro: "centro",
+                endereco: "Av. Miguel Rosa, 1234 - Centro, Teresina - PI",
+                mapa: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3975.653774161742!2d-42.801274!3d-5.091019!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x78e388cd2cf6253%3A0x160c1ea4d3c78733!2sSETRANS!5e0!3m2!1spt-BR!2sbr!4v1715700000000"
+            },
+            {
+                estado: "PI",
+                bairro: "ilhotas",
+                endereco: "Rua das Flores, 567 - Ilhotas, Teresina - PI",
+                mapa: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3975.723849307279!2d-42.803456!3d-5.084821!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x78e389123456789%3A0xabcdef123456789!2sUnidade%20Ilhotas!5e0!3m2!1spt-BR!2sbr!4v1715700000001"
+            }
+        ];
+
+        const documentos = {
+            multa: ["CRLV", "CNH"],
+            passe: ["RG", "CPF", "Comprovante de Matrícula"],
+            licenciamento: ["CNPJ", "Alvará", "Certidões Negativas"]
+        };
+
+        function processarFormulario(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById("nome").value;
+            const estado = document.getElementById("estado").value.toUpperCase();
+            const bairro = document.getElementById("bairro").value.toLowerCase();
+            const servico = document.getElementById("servico").value;
+
+            const unidade = unidades.find(u => u.estado === estado && u.bairro === bairro);
+            const resultadoDiv = document.getElementById("resultado");
+
+            let html = `<p>Olá <strong>${nome}</strong>,</p>`;
+
+            if (unidade) {
+                html += `<p>Você pode ir à unidade localizada em:</p>
+                         <p><strong>${unidade.endereco}</strong></p>
+                         <iframe src="${unidade.mapa}" width="100%" height="300" style="border:0;" loading="lazy"></iframe>`;
+            } else {
+                html += `<p>Não encontramos uma unidade específica no seu bairro. Recomendamos entrar em contato com a sede principal.</p>`;
+            }
+
+            if (servico && documentos[servico]) {
+                html += `<p>Para <strong>${document.getElementById("servico").selectedOptions[0].text}</strong>, leve os seguintes documentos:</p><ul>`;
+                documentos[servico].forEach(doc => {
+                    html += `<li>${doc}</li>`;
+                });
+                html += `</ul>`;
+            }
+
+            resultadoDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
